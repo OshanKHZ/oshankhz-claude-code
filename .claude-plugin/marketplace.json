@@ -1,0 +1,20 @@
+{
+  "name": "oshankhz-claude-code",
+  "owner": {
+    "name": "OshanKHZ",
+    "contact": "github.com/OshanKHZ"
+  },
+  "description": "OshanKHZ's curated Claude Code setup",
+  "plugins": [
+    {
+      "name": "oshankhz-claude-code",
+      "source": "./",
+      "description": "Skills, commands, and workflows for productive development",
+      "version": "1.0.0",
+      "author": {
+        "name": "OshanKHZ"
+      },
+      "tags": ["skills", "commands", "hooks", "agents"]
+    }
+  ]
+}

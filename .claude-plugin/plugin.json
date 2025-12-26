@@ -1,0 +1,40 @@
+{
+  "name": "oshankhz-claude-code",
+  "version": "1.0.0",
+  "description": "OshanKHZ's curated Claude Code setup with skills, commands, and workflows for productive development",
+  "author": "OshanKHZ",
+  "license": "MIT",
+  "skills": [
+    {
+      "name": "skill-development",
+      "path": ".claude/skills/skill-development",
+      "description": "Create and edit Claude Code skills"
+    },
+    {
+      "name": "command-development",
+      "path": ".claude/skills/command-development",
+      "description": "Build slash commands with YAML frontmatter"
+    },
+    {
+      "name": "hook-development",
+      "path": ".claude/skills/hook-development",
+      "description": "Set up event hooks (PreToolUse, PostToolUse, Stop)"
+    },
+    {
+      "name": "agent-development",
+      "path": ".claude/skills/agent-development",
+      "description": "Create custom agents with system prompts"
+    },
+    {
+      "name": "instructions-development",
+      "path": ".claude/skills/instructions-development",
+      "description": "Manage CLAUDE.md and modular rules"
+    }
+  ],
+  "tags": [
+    "skills",
+    "commands",
+    "hooks",
+    "agents"
+  ]
+}
