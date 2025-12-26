@@ -7,6 +7,7 @@
 ```bash
 # Step 1: Add the marketplace
 /plugin marketplace add OshanKHZ/oshankhz-claude-code
+
 # Step 2: Install the plugin
 /plugin install oshankhz-claude-code
 ```
@@ -17,11 +18,11 @@
 
 | Name | Purpose |
 |------|---------|
-| skill-development | Create and edit Claude Code skills |
-| command-development | Build slash commands with YAML frontmatter |
-| hook-development | Set up event hooks (PreToolUse, PostToolUse, Stop) |
-| agent-development | Create custom agents with system prompts |
-| instructions-development | Manage CLAUDE.md and modular rules |
+| skill-development | Create, edit, and validate skills with proper structure, frontmatter, and progressive disclosure |
+| command-development | Build slash commands with dynamic arguments, file references, and bash execution |
+| hook-development | Create event-driven automation with prompt-based and command hooks for validation and policies |
+| agent-development | Design autonomous agents with triggering examples, system prompts, and tool restrictions |
+| instructions-development | Initialize, sync, and organize CLAUDE.md with codebase patterns and modular rules |
 
 ## Local Development
 
