@@ -1,16 +1,20 @@
 # OshanKHZ Claude Code
 
-> This is my personal Claude Code setup. These are the configurations I've validated and use daily. More skills, commands, and agents coming soon.
+This is my personal Claude Code setup. These are the configurations I've validated and use daily. More skills, commands, and agents coming soon.
 
 ## Installation
 
-```bash
+Run these commands inside Claude Code (not in your terminal):
+
+```
 # Step 1: Add the marketplace
 /plugin marketplace add OshanKHZ/oshankhz-claude-code
 
 # Step 2: Install the plugin
 /plugin install oshankhz-claude-code
 ```
+
+> **Note:** After installation, skills won't appear in `~/.claude/skills/`. They're loaded directly from the marketplace. Test by asking Claude to "create a skill", for example - the skill-development skill should activate automatically.
 
 ## What's Included
 
