@@ -48,9 +48,27 @@ Provides 4 main operations:
 
 ## Instructions
 
-### Step 1: Determine Operation Mode
+### Step 0: Check Global Configuration (CRITICAL)
 
-Use AskUserQuestion tool:
+**Before creating any project-level documentation, ALWAYS read the user's global CLAUDE.md:**
+
+```bash
+# Check if global CLAUDE.md exists
+~/.claude/CLAUDE.md
+```
+
+**If it exists:**
+- Read and analyze what rules are already defined globally
+- **DO NOT duplicate** global rules in project CLAUDE.md
+- Only add project-specific patterns that differ from or extend global rules
+- Mention to user: "I found your global CLAUDE.md - I'll only add project-specific rules"
+
+**If it doesn't exist:**
+- Proceed normally with project documentation
+
+### Step 1: Determine Operation and Complexity
+
+Use AskUserQuestion tool with TWO questions:
 
 ```json
 {
@@ -61,20 +79,31 @@ Use AskUserQuestion tool:
       "multiSelect": false,
       "options": [
         {
-          "label": "Create new CLAUDE.md (no documentation exists)",
-          "description": "Start from scratch with opinionated baseline. Quick setup for new projects."
+          "label": "Create new CLAUDE.md",
+          "description": "Start from scratch with opinionated baseline"
         },
         {
           "label": "Sync CLAUDE.md with existing code",
-          "description": "Analyze codebase to detect patterns and update documentation."
-        },
-        {
-          "label": "Create modular .claude/rules/ structure",
-          "description": "Set up organized rule files for large projects."
+          "description": "Analyze codebase to detect patterns and update docs"
         },
         {
           "label": "Split large CLAUDE.md into rules/",
-          "description": "Break CLAUDE.md (>500 lines) into focused files."
+          "description": "Break CLAUDE.md (>500 lines) into focused files"
+        }
+      ]
+    },
+    {
+      "question": "What complexity level?",
+      "header": "Structure",
+      "multiSelect": false,
+      "options": [
+        {
+          "label": "Simple (just CLAUDE.md)",
+          "description": "Single file, good for small/medium projects"
+        },
+        {
+          "label": "Modular (CLAUDE.md + .claude/rules/)",
+          "description": "Multiple files with path patterns, for large projects"
         }
       ]
     }
@@ -83,10 +112,11 @@ Use AskUserQuestion tool:
 ```
 
 Route to workflow:
-- **Create new** → Initialize Workflow (Step 2)
-- **Sync with code** → Sync Workflow (Step 3)
-- **Create modular** → Organize Workflow (Step 4)
-- **Split large** → Split Workflow (Step 5)
+- **Create new + Simple** → Initialize Workflow (Step 2) - single file
+- **Create new + Modular** → Initialize Workflow (Step 2) + Organize Workflow (Step 4)
+- **Sync + Simple** → Sync Workflow (Step 3) - update single file
+- **Sync + Modular** → Sync Workflow (Step 3) + Organize Workflow (Step 4)
+- **Split** → Split Workflow (Step 5)
 
 ---
 
@@ -96,15 +126,12 @@ Create opinionated baseline CLAUDE.md for new projects.
 
 **Process**:
 
-1. **Detect or ask about tech stack**
-   - Check package.json, requirements.txt, go.mod
-   - Ask user if no code exists
+1. **Detect project type**
+   - Check if it's a code project (package.json, requirements.txt, go.mod, etc.)
+   - Or non-code (docs, notes, research, etc.)
+   - Ask user if unclear
 
-2. **Ask user preferences** (AskUserQuestion):
-   - Single file vs modular approach
-   - Architecture pattern (FSD, Feature-First, Package by Feature, MVC)
-
-3. **Think through design**:
+2. **Think through design**:
    - Minimum viable CLAUDE.md?
    - Similar projects/patterns?
    - Architectural trade-offs?
