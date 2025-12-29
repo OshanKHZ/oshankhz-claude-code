@@ -18,7 +18,15 @@ Run these commands inside Claude Code (not in your terminal):
 
 ## What's Included
 
-### Skills (5)
+### 🤖 01 - agents/
+
+| Name | Purpose |
+|------|---------|
+| documentation-writer | Create accurate, demand-driven documentation following Diataxis principles |
+
+### 👾 02 - skills/
+
+#### dev-skills/ (Plugin Development)
 
 | Name | Purpose |
 |------|---------|
@@ -27,6 +35,12 @@ Run these commands inside Claude Code (not in your terminal):
 | hook-development | Create event-driven automation with prompt-based and command hooks for validation and policies |
 | agent-development | Design autonomous agents with triggering examples, system prompts, and tool restrictions |
 | instructions-development | Initialize, sync, and organize CLAUDE.md with codebase patterns and modular rules |
+
+#### Standalone Skills
+
+| Name | Purpose |
+|------|---------|
+| documentation-standards | Diataxis-based templates, checklists, and examples for READMEs, APIs, tutorials, and ADRs |
 
 ## Local Development
 

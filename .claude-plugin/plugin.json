@@ -6,5 +6,6 @@
     "name": "OshanKHZ"
   },
   "license": "MIT",
-  "skills": "./.claude/skills/"
+  "skills": "./02 - skills/",
+  "agents": "./01 - agents/"
 }
