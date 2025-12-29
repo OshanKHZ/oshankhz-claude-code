@@ -32,7 +32,7 @@ To get the latest version:
 |------|---------|
 | documentation-writer | Create accurate, demand-driven documentation following Diataxis principles |
 
-### 👾 02 - skills/
+### ⚡ 02 - skills/
 
 #### dev-skills/ (Plugin Development)
 

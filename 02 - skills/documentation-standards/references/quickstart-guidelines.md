@@ -79,6 +79,26 @@ Add approximate time for each section to help readers plan.
 
 Provide actionable support options.
 
+### 7. Use Emojis in Section Headers
+
+Add relevant emojis to `##` section headers for visual scanning. Keep the main title `#` clean without emojis.
+
+**Good:**
+```markdown
+# Quick Start                    # No emoji in title
+## 📋 Prerequisites              # Emoji in sections
+## 🚀 Installation
+## ✅ Verify It Works
+## 🔧 Troubleshooting
+## 🆘 Need Help?
+```
+
+**Bad:**
+```markdown
+# ⚡ Quick Start                 # Emoji in title
+## Prerequisites                 # No emoji in sections
+```
+
 **Good:**
 ```markdown
 ## Need Help?
