@@ -16,6 +16,14 @@ Run these commands inside Claude Code (not in your terminal):
 
 > **Note:** After installation, skills won't appear in `~/.claude/skills/`. They're loaded directly from the marketplace. Test by asking Claude to "create a skill", for example - the skill-development skill should activate automatically.
 
+## Updating
+
+To get the latest version:
+
+```
+/plugin → Manage marketplaces → oshankhz-claude-code → Update
+```
+
 ## What's Included
 
 ### 🤖 01 - agents/

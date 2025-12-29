@@ -10,6 +10,7 @@ Templates, workflows, and checklists for creating documentation following Diatax
 ## When to Use This Skill
 
 Use when:
+
 - Creating any type of documentation
 - Need template for specific doc type
 - Want checklist to verify doc completeness
@@ -26,17 +27,17 @@ Use when:
 
 ## Documentation Types Overview
 
-| Type | Diataxis | When to Use | Reference |
-|------|----------|-------------|-----------|
-| README (root) | How-to | Project entry point, setup | `references/readme-root.md` |
-| README (module) | Reference + How-to | Specific module docs | `references/readme-module.md` |
-| Quick Start | How-to | Fast path to working state | `references/quickstart.md` |
-| CONTRIBUTING | How-to | Guide for contributors | `references/contributing.md` |
-| API docs | Reference | Endpoint documentation | `references/api-docs.md` |
-| Tutorial | Tutorial | Onboarding, learning | `references/tutorial.md` |
-| How-to guide | How-to | Specific task completion | `references/how-to.md` |
-| Reference | Reference | Exhaustive information | `references/reference-docs.md` |
-| Explanation/ADR | Explanation | Architecture decisions, WHY | `references/explanation-adr.md` |
+| Type | Diataxis | When to Use | Guidelines | Template |
+|------|----------|-------------|------------|----------|
+| README (root) | How-to | Project entry point | `references/readme-guidelines.md` | `examples/readme-root-template.md` |
+| README (module) | Reference + How-to | Module documentation | `references/readme-guidelines.md` | `examples/readme-module-template.md` |
+| Quick Start | How-to | Fast path to working | `references/quickstart-guidelines.md` | `examples/quickstart-template.md` |
+| CONTRIBUTING | How-to | Guide contributors | `references/contributing-guidelines.md` | `examples/contributing-template.md` |
+| API docs | Reference | Endpoint documentation | `references/api-docs-guidelines.md` | `examples/api-docs-template.md` |
+| Tutorial | Tutorial | Onboarding, learning | `references/tutorial-guidelines.md` | `examples/tutorial-template.md` |
+| How-to guide | How-to | Specific task completion | `references/howto-guidelines.md` | `examples/howto-template.md` |
+| Reference | Reference | Exhaustive information | `references/reference-guidelines.md` | `examples/reference-docs-template.md` |
+| Explanation/ADR | Explanation | Architecture decisions | `references/adr-guidelines.md` | `examples/explanation-adr-template.md` |
 
 ## Quick Decision Tree
 
@@ -52,9 +53,10 @@ What does the reader need?
 
 ### Type 1: README (Root Project)
 
-**Diataxis**: How-to (goal: get project running)
+**Diataxis:** How-to (goal: get project running)
 
 **Required Sections:**
+
 1. Title + One-liner
 2. Quick Start (fastest path to working)
 3. Installation (step-by-step)
@@ -62,83 +64,97 @@ What does the reader need?
 5. License
 
 **Checklist:**
+
 - [ ] Can someone get running in <5 minutes?
-- [ ] Prerequisites clearly stated?
+- [ ] Prerequisites clearly stated (checklist format)?
 - [ ] Installation steps verified to work?
 - [ ] Basic usage example included?
 
-**See `references/readme-root.md` for template**
+**Guidelines:** `references/readme-guidelines.md`
+**Template:** `examples/readme-root-template.md`
 
 ---
 
 ### Quick Start Guide
 
-**Diataxis**: How-to (goal: get running FAST)
+**Diataxis:** How-to (goal: get running FAST)
 
 **When to Create:** If README Quick Start section > 10 lines
 
 **Required Sections:**
-1. Time estimate upfront
-2. Prerequisites (minimal)
-3. Steps with expected output
+
+1. Time estimate upfront (with emoji title)
+2. Prerequisites (checklist format with `- [ ]`)
+3. Steps with time per section and expected output
 4. Verification that it works
-5. Next steps links
+5. Troubleshooting (top 2-3 issues)
+6. "Need Help?" section with resources
 
 **Checklist:**
+
 - [ ] Time-boxed (stated upfront)?
 - [ ] Every command copy-paste ready?
 - [ ] Expected output shown for each step?
 - [ ] Ends with verifiable working state?
+- [ ] "Need Help?" section instead of "Next Steps"?
 
-**See `references/quickstart.md` for template**
+**Guidelines:** `references/quickstart-guidelines.md`
+**Template:** `examples/quickstart-template.md`
 
 ---
 
 ### CONTRIBUTING.md
 
-**Diataxis**: How-to (goal: enable contributions)
+**Diataxis:** How-to (goal: enable contributions)
 
 **Required Sections:**
+
 1. How to Contribute (overview)
 2. Reporting Bugs
-3. Development Setup
+3. Development Setup (with time estimate)
 4. Pull Request Process
 5. Code of Conduct (or link)
 
 **Checklist:**
+
 - [ ] Welcoming tone?
 - [ ] Setup instructions tested?
 - [ ] PR process clear?
 - [ ] Response timeline mentioned?
 
-**See `references/contributing.md` for template**
+**Guidelines:** `references/contributing-guidelines.md`
+**Template:** `examples/contributing-template.md`
 
 ---
 
 ### Type 2: README (Module/Library)
 
-**Diataxis**: Reference + How-to hybrid
+**Diataxis:** Reference + How-to hybrid
 
 **Required Sections:**
+
 1. Purpose - What problem does this module solve?
 2. API - Functions/classes exported
 3. Usage Examples - Common use cases
 4. Dependencies - What this module depends on
 
 **Checklist:**
+
 - [ ] Purpose clearly stated?
 - [ ] All exports documented?
 - [ ] Examples for main use cases?
 
-**See `references/readme-module.md` for template**
+**Guidelines:** `references/readme-guidelines.md`
+**Template:** `examples/readme-module-template.md`
 
 ---
 
 ### Type 3: API Documentation
 
-**Diataxis**: Reference (exhaustive, accurate)
+**Diataxis:** Reference (exhaustive, accurate)
 
 **Required Sections:**
+
 1. Endpoint - Method + Path
 2. Authentication - Requirements
 3. Request - Headers, params, body
@@ -146,113 +162,134 @@ What does the reader need?
 5. Examples - curl/code
 
 **Checklist:**
+
 - [ ] All parameters documented with types?
 - [ ] All response codes covered?
 - [ ] Request/response examples provided?
 - [ ] Authentication requirements stated?
 
-**See `references/api-docs.md` for template**
+**Guidelines:** `references/api-docs-guidelines.md`
+**Template:** `examples/api-docs-template.md`
 
 ---
 
 ### Type 4: Tutorial
 
-**Diataxis**: Tutorial (learning-oriented)
+**Diataxis:** Tutorial (learning-oriented)
 
 **Core Principles:**
+
 - Hand-holding: Every step explicit
 - Confidence building: Small wins frequently
 - Beginner-friendly: Assume nothing
 
 **Required Sections:**
+
 1. What you'll learn - Clear outcomes
-2. Prerequisites - What reader needs
-3. Steps - Numbered, explicit
-4. Verification - How to know it worked
-5. Next steps - Where to go from here
+2. Time estimate - Total and per section
+3. Prerequisites - Checklist format
+4. Steps - Numbered, explicit with checkpoints
+5. Verification - How to know it worked
+6. Troubleshooting - Common issues
+7. Need Help? - Resources and next steps
 
 **Checklist:**
+
 - [ ] Can a complete beginner follow?
 - [ ] Each step has verification?
 - [ ] No assumed knowledge?
+- [ ] Time estimates included?
 
-**See `references/tutorial.md` for template**
+**Guidelines:** `references/tutorial-guidelines.md`
+**Template:** `examples/tutorial-template.md`
 
 ---
 
 ### Type 5: How-to Guide
 
-**Diataxis**: How-to (goal-oriented)
+**Diataxis:** How-to (goal-oriented)
 
 **Core Principles:**
+
 - Goal-focused: Solve specific problem
 - Assumes knowledge: Reader knows basics
 - Concise: Minimum steps to goal
 
 **Required Sections:**
+
 1. Goal - What reader will accomplish
 2. Prerequisites - Required knowledge/setup
 3. Steps - Direct path to goal
 4. Troubleshooting - Common issues
 
 **Checklist:**
+
 - [ ] Goal clearly stated?
 - [ ] Steps minimal but complete?
 - [ ] No unnecessary explanation?
 
-**See `references/how-to.md` for template**
+**Guidelines:** `references/howto-guidelines.md`
+**Template:** `examples/howto-template.md`
 
 ---
 
 ### Type 6: Reference Documentation
 
-**Diataxis**: Reference (information-oriented)
+**Diataxis:** Reference (information-oriented)
 
 **Core Principles:**
+
 - Exhaustive: All options documented
 - Accurate: 100% correct, verified against code
 - Consistent: Same format throughout
 
 **Required Sections:**
+
 1. Overview - What this covers
 2. Index/TOC - Navigation
 3. Entries - Consistent format per item
 4. Cross-references - Links to related
 
 **Checklist:**
+
 - [ ] Every option/parameter documented?
 - [ ] Format consistent throughout?
 - [ ] Verified against actual code?
 - [ ] Types/defaults specified?
 
-**See `references/reference-docs.md` for template**
+**Guidelines:** `references/reference-guidelines.md`
+**Template:** `examples/reference-docs-template.md`
 
 ---
 
 ### Type 7: Explanation / ADR
 
-**Diataxis**: Explanation (understanding-oriented)
+**Diataxis:** Explanation (understanding-oriented)
 
 **Core Principles:**
+
 - WHY-focused: Context and reasoning
 - Long half-life: Stays relevant over time
 - Contextual: Background and history
 
 **Required Sections (ADR Format):**
+
 1. Title - Decision being documented
 2. Status - Proposed/Accepted/Deprecated
 3. Context - Why decision was needed
 4. Decision - What was decided
-5. Alternatives - Options considered
-6. Consequences - Trade-offs, implications
+5. Alternatives - Options considered with pros/cons
+6. Consequences - Trade-offs (positive AND negative)
 
 **Checklist:**
+
 - [ ] Context explains WHY decision was needed?
 - [ ] Alternatives considered documented?
 - [ ] Trade-offs clearly stated?
 - [ ] Consequences (good AND bad) listed?
 
-**See `references/explanation-adr.md` for template**
+**Guidelines:** `references/adr-guidelines.md`
+**Template:** `examples/explanation-adr-template.md`
 
 ---
 
@@ -261,6 +298,7 @@ What does the reader need?
 ### Step 1: Identify the Reader
 
 Who is blocked without this doc?
+
 - **New user** → Tutorial or README
 - **Developer doing task** → How-to
 - **Developer looking up info** → Reference
@@ -269,14 +307,16 @@ Who is blocked without this doc?
 ### Step 2: Identify the Need
 
 What do they need?
+
 - **Learn** → Tutorial
 - **Do** → How-to
 - **Know** → Reference
 - **Understand** → Explanation
 
-### Step 3: Get Template
+### Step 3: Get Guidelines and Template
 
-Consult the reference file for that doc type.
+1. Consult the guidelines file for rules and tips
+2. Use the template file as a starting point
 
 ### Step 4: Verify
 
@@ -284,34 +324,41 @@ Use the checklist for that doc type.
 
 ## Anti-Patterns
 
-- **Super-documents**: Mixing all types in one doc
-- **Tutorial as Reference**: Exhaustive details in learning context
-- **Reference without verification**: Claims not traced to code
-- **Explanation without context**: WHY without background
-- **How-to with too much explanation**: Should be direct
+- **Super-documents:** Mixing all types in one doc
+- **Tutorial as Reference:** Exhaustive details in learning context
+- **Reference without verification:** Claims not traced to code
+- **Explanation without context:** WHY without background
+- **How-to with too much explanation:** Should be direct
+- **"Next Steps" instead of "Need Help?":** Less actionable
 
-## Additional Resources
+## File Structure
 
-### Reference Files (Detailed Templates)
-
-**Essential Repo Docs:**
-- **`references/readme-root.md`** - Complete root README guide with template
-- **`references/quickstart.md`** - Quick Start guide for fast setup
-- **`references/contributing.md`** - CONTRIBUTING.md template and guidelines
-
-**Documentation Types:**
-- **`references/readme-module.md`** - Module documentation guide with template
-- **`references/api-docs.md`** - API documentation patterns with template
-- **`references/tutorial.md`** - Tutorial writing guide with template
-- **`references/how-to.md`** - How-to guide patterns with template
-- **`references/reference-docs.md`** - Reference documentation guide with template
-- **`references/explanation-adr.md`** - ADR and explanation guide with template
-
-### Examples (Working Samples)
-
-- **`examples/good-readme.md`** - Well-structured README
-- **`examples/good-api-doc.md`** - Complete API endpoint doc
-- **`examples/good-adr.md`** - Well-written ADR
+```
+documentation-standards/
+├── SKILL.md                    # This file - overview and checklists
+├── references/                 # Guidelines and rules for each doc type
+│   ├── quickstart-guidelines.md
+│   ├── contributing-guidelines.md
+│   ├── readme-guidelines.md
+│   ├── api-docs-guidelines.md
+│   ├── tutorial-guidelines.md
+│   ├── howto-guidelines.md
+│   ├── reference-guidelines.md
+│   └── adr-guidelines.md
+└── examples/                   # Concrete templates and working samples
+    ├── quickstart-template.md
+    ├── contributing-template.md
+    ├── readme-root-template.md
+    ├── readme-module-template.md
+    ├── api-docs-template.md
+    ├── tutorial-template.md
+    ├── howto-template.md
+    ├── reference-docs-template.md
+    ├── explanation-adr-template.md
+    ├── good-readme.md          # Working example
+    ├── good-api-doc.md         # Working example
+    └── good-adr.md             # Working example
+```
 
 ---
 
