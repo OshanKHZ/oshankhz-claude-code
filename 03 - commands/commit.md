@@ -102,19 +102,31 @@ type(scope): description
 - "If applied, this commit will **added user login**" ❌
 
 **Length:**
-- First line: max 72 characters
+- First line: max 50 characters (hard limit: 72)
+- Keep it short and focused
 - Body (optional): explain WHY, not WHAT
 
 ### 4. Execute commit
 
-After confirming message:
-```bash
-git commit -m "type(scope): description"
+After generating the commit message, use AskUserQuestion to confirm:
+- Show the generated commit message
+- Ask if user wants to proceed with the commit
+- Only execute `git commit` if user confirms
+
+**Question format:**
+```
+Ready to commit with this message:
+"[generated message]"
+
+Proceed with commit?
+Options:
+- Yes, commit now
+- No, cancel
 ```
 
-Or with body:
+If confirmed:
 ```bash
-git commit -m "type(scope): description" -m "Body explaining why"
+git commit -m "type(scope): description"
 ```
 
 ### 5. Handle --amend flag
