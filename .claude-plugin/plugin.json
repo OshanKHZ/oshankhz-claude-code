@@ -1,6 +1,6 @@
 {
   "name": "oshankhz-claude-code",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "OshanKHZ's curated Claude Code setup with skills, commands, and workflows for productive development",
   "author": {
     "name": "OshanKHZ"
@@ -14,7 +14,8 @@
     "agents"
   ],
   "commands": [
-    "./03 - commands/commit.md"
+    "./03 - commands/commit.md",
+    "./03 - commands/changelog.md"
   ],
   "agents": [
     "./01 - agents/codebase-analyzer.md"

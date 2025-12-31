@@ -26,11 +26,12 @@ To get the latest version:
 
 ## What's Included
 
-### 🔧 Commands (1)
+### 🔧 Commands (2)
 
-| Command | Purpose | Flags |
-|---------|---------|-------|
+| Command | Purpose | Flags/Args |
+|---------|---------|------------|
 | `/commit` | Quick conventional commit with auto-generated or custom message | `--push` `--amend` `--all` |
+| `/changelog` | Generate or update CHANGELOG.md following Keep a Changelog format | `[version]` |
 
 ### ⚡ Skills (6)
 
