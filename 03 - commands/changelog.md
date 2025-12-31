@@ -1,5 +1,5 @@
 ---
-allowed-tools: Bash(git:*, date:*, head:*, test:*, cat:*, grep:*), Read, Write, AskUserQuestion
+allowed-tools: Bash(git:*), Bash(date:*), Bash(head:*), Bash(test:*), Bash(grep:*), Read, Write, AskUserQuestion
 argument-hint: [version]
 description: Generate or update CHANGELOG.md following Keep a Changelog format
 ---
@@ -14,9 +14,17 @@ description: Generate or update CHANGELOG.md following Keep a Changelog format
 
 1. **Get today's date (MANDATORY - never assume):**
    ```bash
-   date +%Y-%m-%d
+   date "+%B %d, %Y"
    ```
-   Store this result for the release date.
+   This gives format like "December 25, 2025". Then add ordinal suffix (1st, 2nd, 3rd, 4th, etc.) to the day number.
+
+   **Ordinal suffix rules:**
+   - 1, 21, 31 → "st" (1st, 21st, 31st)
+   - 2, 22 → "nd" (2nd, 22nd)
+   - 3, 23 → "rd" (3rd, 23rd)
+   - All others → "th" (4th, 5th, 11th, 12th, 13th, etc.)
+
+   **Final format:** `December 25th, 2025`
 
 2. **Check for existing CHANGELOG.md:**
    ```bash
@@ -33,12 +41,39 @@ description: Generate or update CHANGELOG.md following Keep a Changelog format
    - Any custom header text
    - Link format at bottom (if any)
 
-4. **Detect version source (check in order):**
-   - `test -f package.json && grep '"version"' package.json`
-   - `test -f Cargo.toml && grep '^version' Cargo.toml`
-   - `test -f pyproject.toml && grep 'version' pyproject.toml`
-   - `test -f setup.py && grep 'version' setup.py`
-   - Git tags fallback: `git describe --tags --abbrev=0 2>/dev/null`
+4. **Detect version source (tiered approach):**
+
+   **Tier 1 - Common files (check first, covers 90% of projects):**
+   ```bash
+   test -f package.json && echo "FOUND: package.json"
+   test -f Cargo.toml && echo "FOUND: Cargo.toml"
+   test -f pyproject.toml && echo "FOUND: pyproject.toml"
+   test -f composer.json && echo "FOUND: composer.json"
+   ```
+   If found, use Read tool to parse and extract version.
+
+   **Tier 2 - Root-level JSON/TOML with version (if Tier 1 fails):**
+   ```bash
+   grep -l '"version"' *.json 2>/dev/null
+   grep -l 'version' *.toml 2>/dev/null
+   ```
+   Finds unconventional files like `plugin.json`, `manifest.json`, `marketplace.json`.
+
+   **Tier 3 - Config directories (if Tier 2 fails):**
+   ```bash
+   grep -rl '"version"' .claude-plugin/ config/ .config/ 2>/dev/null | head -3
+   ```
+   Searches common config directories.
+
+   **Tier 4 - Git tags (fallback):**
+   ```bash
+   git describe --tags --abbrev=0 2>/dev/null
+   ```
+
+   **Tier 5 - Ask user:**
+   If nothing found, ask user to provide the version manually.
+
+   **If multiple version files found:** Ask user which one is the source of truth.
 
 5. **Get commits since last version:**
    - Find last tag: `git describe --tags --abbrev=0 2>/dev/null`
@@ -51,11 +86,15 @@ description: Generate or update CHANGELOG.md following Keep a Changelog format
 
 | Detected Pattern | Action |
 |------------------|--------|
-| `## [X.Y.Z] - YYYY-MM-DD` | Include date in new entry |
+| `## [vX.Y.Z]` (with "v" prefix) | Use "v" prefix in new entry |
+| `## [X.Y.Z]` (no "v" prefix) | Omit "v" prefix in new entry |
+| `## [X.Y.Z] - <date>` | Include date in new entry (match existing date format) |
 | `## [X.Y.Z]` (no date) | Omit date in new entry |
 | Custom header text | Preserve existing header |
 | Specific section order | Follow same order |
 | Link references at bottom | Add link for new version |
+
+**Default for new changelogs:** Use "v" prefix (e.g., `## [v1.0.0]`)
 
 **Never change the existing changelog's style.** Match it exactly.
 
@@ -120,7 +159,7 @@ User can also select "Other" to provide custom version.
 ### Step 1: Gather Context (CRITICAL)
 
 Run bash commands to gather:
-- **Today's date** (MANDATORY: `date +%Y-%m-%d`)
+- **Today's date** (MANDATORY: `date "+%B %d, %Y"` then add ordinal suffix)
 - Existing changelog header (first 50 lines only)
 - Current version from project files
 - Last git tag
@@ -176,32 +215,35 @@ If CHANGELOG.md exists:
 - Preserve all existing content exactly
 
 If CHANGELOG.md doesn't exist:
-- Create with Keep a Changelog header:
+- Create with simple header using "v" prefix:
   ```markdown
   # Changelog
 
-  All notable changes to this project will be documented in this file.
+  ## [vX.Y.Z] - Month DDth, YYYY
 
-  The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-  and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-  ## [Unreleased]
-
-  ## [X.Y.Z] - YYYY-MM-DD
-  ...
+  ### Added
+  - ...
   ```
 
-### Step 8: Update Version in Project Files (Optional)
+### Step 8: Version Sync Check (IMPORTANT)
 
-After writing changelog, ask:
+After determining the new changelog version, compare it with the project file version:
 
-Question: "Update version in project files?"
-Header: "Update ver"
+**If versions match:** No action needed, proceed.
+
+**If versions DON'T match** (e.g., changelog will be 1.1.0 but plugin.json is still 1.0.1):
+
+Use AskUserQuestion:
+
+Question: "Version mismatch detected. Changelog: [new version], Project file: [current version]. Update project files?"
+Header: "Sync version"
 Options:
-  - Yes (Update package.json/Cargo.toml/etc.)
-  - No (Only update changelog)
+  - Yes, update to [new version] (Sync project files with changelog)
+  - No, keep current version (Only update changelog)
 
-If yes, update the detected version source file.
+**Files to update (if yes):**
+- Update the version field in the detected version source file(s)
+- If multiple files have versions (e.g., `plugin.json` AND `marketplace.json`), update all of them
 
 ### Step 9: Show Result
 
@@ -225,10 +267,10 @@ After completion, show:
 - Include them under "Changed" section with original message
 - Note that conventional commit format is recommended
 
-## Example Output (with dates)
+## Example Output (new changelog with dates)
 
 ```markdown
-## [1.2.0] - 2025-01-15
+## [v1.2.0] - January 15th, 2025
 
 ### Added
 - Add user authentication with OAuth2 support
@@ -245,7 +287,7 @@ After completion, show:
 ## Example Output (without dates, following existing format)
 
 ```markdown
-## [1.2.0]
+## [v1.2.0]
 
 ### Added
 - Add user authentication with OAuth2 support
