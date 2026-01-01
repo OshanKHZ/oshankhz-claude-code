@@ -108,7 +108,8 @@ Think of it as completing the sentence: "This commit will..."
 **Length:**
 - First line: max 50 characters (hard limit: 72)
 - Keep it short and focused
-- Body (optional): explain WHY, not WHAT
+- Body (optional): 1-2 lines max, explain WHY not WHAT
+- **CRITICAL:** Don't copy verbose commit patterns from git log - keep messages concise regardless of recent commit length
 
 ### 4. Execute commit
 
@@ -128,10 +129,12 @@ Options:
 - No, cancel
 ```
 
-If confirmed:
+If confirmed, create a simple commit without footers:
 ```bash
 git commit -m "type(scope): description"
 ```
+
+**IMPORTANT:** Do NOT add any footers like "Generated with Claude Code" or "Co-Authored-By" - keep commits clean and simple.
 
 ### 5. Handle --amend flag
 
