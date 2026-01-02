@@ -1,5 +1,10 @@
 # Changelog
 
+## [v1.2.0] - January 2nd, 2026
+
+### Changed
+- Restructure into multi-plugin marketplace with cc-swiss-knife (core) and claude-code-forge (development tools)
+
 ## [v1.1.0] - December 31st, 2025
 
 ### Added
