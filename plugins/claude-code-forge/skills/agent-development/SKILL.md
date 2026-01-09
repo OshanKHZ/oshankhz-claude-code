@@ -159,6 +159,64 @@ tools: ["Read", "Write", "Grep", "Bash"]
 - Testing: `["Read", "Bash", "Grep"]`
 - Full access: Omit field or use `["*"]`
 
+### hooks (optional)
+
+Agent-level hooks scoped to agent lifecycle.
+
+**Format:** Array of hook configurations
+
+```yaml
+hooks:
+  - type: PreToolUse
+    once: true
+  - type: PostToolUse
+  - type: Stop
+```
+
+**Supported hook types:**
+- `PreToolUse`: Validate before agent uses tools
+- `PostToolUse`: React to agent's tool results
+- `Stop`: Cleanup when agent completes
+
+**When to use:**
+- Validation specific to agent operations
+- Logging/tracking agent actions
+- Setup/teardown within agent lifecycle
+- Per-agent permission enforcement
+
+**Key features:**
+- `once: true` runs hook only once per agent invocation
+- Hooks inherit agent context
+- No command/prompt field needed
+
+**Example use cases:**
+```yaml
+hooks:
+  - type: PreToolUse
+    once: true                  # One-time setup check for agent
+  - type: PostToolUse          # React to every tool agent uses
+  - type: Stop                  # Cleanup when agent finishes
+```
+
+See `../hook-development/` for complete hooks documentation.
+
+### disallowedTools (optional)
+
+Disable specific agents from being invoked.
+
+**Format:** Array with `Task(AgentName)` syntax
+
+```yaml
+disallowedTools: ["Task(SWEAgent)", "Task(ExperimentalAgent)"]
+```
+
+**Use when:**
+- Preventing specific agents from running
+- Testing without certain agents
+- Security/policy enforcement
+
+**Note:** Also configurable in settings.json and via `--disallowedTools` CLI flag.
+
 ## System Prompt Design
 
 The markdown body becomes the agent's system prompt. Write in second person, addressing the agent directly.

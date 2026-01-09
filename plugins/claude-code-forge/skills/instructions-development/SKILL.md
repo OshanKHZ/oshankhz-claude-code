@@ -334,6 +334,42 @@ paths: src/{api,routes}/**/*
 ---
 ```
 
+## Related Settings Configuration
+
+### respectGitignore
+
+Control whether `@-mention` file picker respects .gitignore:
+
+```json
+{
+  "respectGitignore": true
+}
+```
+
+Add to `.claude/settings.json` (project-specific) or `~/.claude/settings.json` (global).
+
+**Use when:** You want file suggestions to exclude gitignored files
+
+### fileSuggestion
+
+Customize `@` file search commands:
+
+```json
+{
+  "fileSuggestion": {
+    "command": "rg --files",
+    "timeout": 5000
+  }
+}
+```
+
+**Use when:**
+- You want faster file search than default
+- You need custom filtering logic
+- You have specific tooling (e.g., fd, find with custom flags)
+
+These settings affect how documentation discovery and file reference tools work.
+
 ## Best Practices
 
 1. ✅ Ask questions first - Understand user needs

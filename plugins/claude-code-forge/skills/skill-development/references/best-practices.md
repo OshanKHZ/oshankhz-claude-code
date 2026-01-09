@@ -22,7 +22,10 @@ Use this checklist before finalizing any skill.
 - [ ] No tabs in YAML (use spaces only)
 - [ ] `name` field present and valid
 - [ ] `description` field present and valid
-- [ ] `allowed-tools` valid if present (comma-separated)
+- [ ] `allowed-tools` valid if present (YAML list or comma-separated)
+- [ ] `user-invocable` field valid if present (boolean)
+- [ ] `context` field valid if present (inherit/fork)
+- [ ] `hooks` field valid if present (array of hook configs)
 - [ ] `version` field present if tracking versions
 
 **Name field requirements:**
@@ -539,15 +542,121 @@ Provide different workflows for different scenarios:
 
 ### Tool-Restricted Skills
 
-Use `allowed-tools` for read-only or limited-scope skills:
+Use `allowed-tools` for read-only or limited-scope skills.
 
+**YAML list format (recommended):**
 ```yaml
 ---
 name: analyzing-codebase
 description: This skill should be used when the user asks to "analyze codebase", "review architecture", "understand code structure", or works with code analysis. Analyzes code without making changes.
-allowed-tools: Read, Grep, Glob
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
 ---
 ```
+
+**With Bash wildcards for flexible permissions:**
+```yaml
+---
+name: deploying-service
+description: This skill should be used when the user asks to "deploy service", "build and push", "run deployment", or mentions deployment workflows. Handles service deployment with git and npm operations.
+allowed-tools:
+  - Read
+  - Bash(git *)          # Allow any git command
+  - Bash(npm *)          # Allow any npm command
+  - Bash(docker *)       # Allow any docker command
+---
+```
+
+**Comma-separated format (legacy but still valid):**
+```yaml
+---
+allowed-tools: Read, Grep, Glob, Bash(git *)
+---
+```
+
+Use YAML lists for better readability and less parsing errors.
+
+### Skills with Inline Hooks
+
+Add validation, logging, or automation scoped to skill lifecycle:
+
+```yaml
+---
+name: modifying-config
+description: This skill should be used when the user asks to "update config", "modify settings", "change configuration", or works with configuration files. Validates changes before writing.
+hooks:
+  - type: PreToolUse
+    once: true           # Run setup check only once
+  - type: PostToolUse    # Validate after every tool use
+  - type: Stop           # Cleanup when skill completes
+---
+```
+
+**When to use inline hooks:**
+- Validation specific to skill operations (e.g., config validation before writing)
+- Setup checks that run once (`once: true`)
+- Cleanup when skill completes (`Stop` hook)
+- Logging/tracking skill-specific actions
+
+**See:** `../../hook-development/` for complete hooks documentation.
+
+### User-Invocable Control
+
+Control whether skill appears in `/` command list:
+
+```yaml
+---
+name: internal-helper
+description: This skill should be used internally by other skills. Not for direct user invocation.
+user-invocable: false    # Hide from slash command list
+---
+```
+
+**When to use `user-invocable: false`:**
+- Internal skills used by other skills
+- Helper skills that should only trigger automatically
+- Experimental skills not ready for user exposure
+
+**Default:** `true` for skills in `/skills/` directories (visible in `/` autocomplete)
+
+### Context Isolation
+
+Run skills in isolated context for experimental or high-risk operations:
+
+```yaml
+---
+name: experimental-refactor
+description: This skill should be used when the user asks to "try experimental refactor", "test new pattern", or mentions experimental changes. Runs in isolated context.
+context: fork            # Isolate from main conversation
+---
+```
+
+**When to use `context: fork`:**
+- Experimental features that might modify behavior unexpectedly
+- High-risk operations (mass refactoring, file deletions)
+- Testing scenarios that shouldn't affect main conversation
+
+**Default:** `inherit` (runs in main conversation context)
+
+### Agent-Specific Skills
+
+Route skills to specialized agents:
+
+```yaml
+---
+name: refactoring-codebase
+description: This skill should be used when the user asks to "refactor codebase", "restructure code", "improve architecture", or mentions large-scale code changes. Routes to SWE agent.
+agent: swe               # Use SWE agent for code-heavy tasks
+---
+```
+
+**Common agent types:**
+- `swe`: Software engineering tasks (refactoring, architecture)
+- `general-purpose`: Default general tasks
+
+**Default:** `main` (current conversation agent)
 
 ### Multi-Language Skills
 
@@ -571,10 +680,23 @@ Apply language-specific patterns from references/[language]-patterns.md.
 ### Manual Testing
 
 **Test trigger activation:**
-1. Restart Claude Code
+
+For personal/project skills (`~/.claude/skills/` or `.claude/skills/`):
+1. Edit skill file (no restart needed - **hot-reload automatic**)
+2. Try trigger phrases from description
+3. Verify skill activates automatically with updated content
+4. Check Claude follows instructions
+
+For plugin skills:
+1. Remove and re-add marketplace (plugin reload required)
 2. Try trigger phrases from description
 3. Verify skill activates automatically
 4. Check Claude follows instructions
+
+**Hot-reload feature:**
+- Skills in `~/.claude/skills/` or `.claude/skills/` reload automatically
+- No restart needed for testing iterations
+- Plugin skills still require marketplace reload
 
 **Test progressive disclosure:**
 1. Trigger skill
@@ -683,6 +805,12 @@ Create references/migration.md for breaking changes:
 - ✅ Use gerund naming
 - ✅ Test thoroughly
 - ✅ Validate before finalizing
+- ✅ Use YAML lists for `allowed-tools` (cleaner than comma-separated)
+- ✅ Use Bash wildcards when appropriate (`Bash(npm *)`)
+- ✅ Set `user-invocable: false` for internal-only skills
+- ✅ Use `context: fork` for experimental or high-risk operations
+- ✅ Add inline hooks for skill-specific automation
+- ✅ Leverage hot-reload for fast iteration (personal/project skills)
 
 ### DON'T
 
@@ -696,6 +824,9 @@ Create references/migration.md for breaking changes:
 - ❌ Duplicate information
 - ❌ Nest references deeply
 - ❌ Explain common knowledge
+- ❌ Make all skills user-invocable (some should be auto-trigger only)
+- ❌ Over-restrict with comma-separated allowed-tools when wildcards work better
+- ❌ Forget to test with hot-reload during development
 
 ## Validation Tools
 

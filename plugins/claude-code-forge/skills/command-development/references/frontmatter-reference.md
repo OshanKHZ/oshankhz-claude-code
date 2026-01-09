@@ -59,7 +59,7 @@ description: Generate API documentation
 
 ### allowed-tools
 
-**Type:** String or Array of strings
+**Type:** String (comma-separated) or Array of strings (YAML list)
 **Required:** No
 **Default:** Inherits from conversation permissions
 
@@ -72,17 +72,21 @@ description: Generate API documentation
 allowed-tools: Read
 ```
 
-**Multiple tools (comma-separated):**
+**Multiple tools - comma-separated (legacy):**
 ```yaml
-allowed-tools: Read, Write, Edit
+allowed-tools: Read, Write, Edit, Bash(git *)
 ```
 
-**Multiple tools (array):**
+**Multiple tools - YAML list (recommended, cleaner):**
 ```yaml
 allowed-tools:
   - Read
   - Write
-  - Bash(git:*)
+  - Edit
+  - Bash(git *)
+  - Bash(npm *)
+  - Grep
+  - Glob
 ```
 
 **Tool Patterns:**
@@ -92,7 +96,16 @@ allowed-tools:
 allowed-tools: Read, Grep, Edit
 ```
 
-**Bash with command filter:**
+**Bash with wildcards (flexible matching):**
+```yaml
+allowed-tools:
+  - Bash(npm *)              # Allow any npm command
+  - Bash(git * main)         # Allow git commands with 'main' anywhere
+  - Bash(* install)          # Allow any command ending with 'install'
+  - Bash(git *)              # Allow any git command
+```
+
+**Legacy Bash with colon prefix (still valid):**
 ```yaml
 allowed-tools: Bash(git:*)           # Only git commands
 allowed-tools: Bash(npm:*)           # Only npm commands
@@ -122,10 +135,122 @@ allowed-tools: "*"
    ```
 
 **Best practices:**
+- Use YAML lists for better readability (recommended over comma-separated)
+- Use wildcards for flexible bash permissions (`Bash(npm *)` instead of listing each npm command)
 - Be as restrictive as possible
-- Use command filters for Bash (e.g., `git:*` not `*`)
 - Only specify when different from conversation permissions
 - Document why specific tools are needed
+
+**Wildcard examples:**
+```yaml
+allowed-tools:
+  - Bash(npm *)          # Any npm command: install, test, build, etc.
+  - Bash(git * main)     # Git commands mentioning 'main' anywhere
+  - Bash(* install)      # Any command ending with 'install'
+```
+
+### user-invocable
+
+**Type:** Boolean
+**Required:** No
+**Default:** `true`
+
+**Purpose:** Control whether command appears in `/` slash command list
+
+**Examples:**
+```yaml
+user-invocable: false  # Hide from autocomplete, programmatic use only
+```
+
+**When to use:**
+- Internal commands called by other commands
+- Commands that should only be programmatically invoked
+- Experimental commands not ready for user exposure
+
+### context
+
+**Type:** String
+**Required:** No
+**Default:** `inherit`
+**Values:** `inherit`, `fork`
+
+**Purpose:** Control command execution context
+
+**Examples:**
+```yaml
+context: fork  # Run in isolated context
+```
+
+**When to use `fork`:**
+- Experimental operations
+- High-risk commands (mass file operations)
+- Testing scenarios that shouldn't affect main conversation
+
+### agent
+
+**Type:** String
+**Required:** No
+**Default:** Current conversation agent
+**Values:** `swe`, `general-purpose`, etc.
+
+**Purpose:** Route command to specialized agent
+
+**Examples:**
+```yaml
+agent: swe  # Use SWE agent for code-heavy commands
+```
+
+**When to use:**
+- Commands requiring specialized agent capabilities
+- Code refactoring, architecture tasks (swe agent)
+
+### language
+
+**Type:** String
+**Required:** No
+**Default:** Match user's conversation language
+**Values:** `english`, `portuguese`, `spanish`, etc.
+
+**Purpose:** Force command responses in specific language
+
+**Examples:**
+```yaml
+language: portuguese  # Always respond in Portuguese
+```
+
+**When to use:**
+- Commands that must respond in specific language
+- Documentation generation in particular language
+- Multilingual team workflows
+
+### hooks
+
+**Type:** Array of hook configurations
+**Required:** No
+**Default:** None
+
+**Purpose:** Add command-scoped hooks for validation, logging, cleanup
+
+**Examples:**
+```yaml
+hooks:
+  - type: PreToolUse
+    once: true           # Run setup check only once
+  - type: PostToolUse    # React to every tool result
+  - type: Stop           # Cleanup when command completes
+```
+
+**Supported hook types:**
+- `PreToolUse`: Validate before tool execution
+- `PostToolUse`: React to tool results
+- `Stop`: Cleanup when command completes
+
+**When to use:**
+- Command-specific validation
+- Setup/teardown within command lifecycle
+- Logging command-specific actions
+
+See `../hook-development/` for complete hooks documentation.
 
 ### model
 

@@ -128,21 +128,37 @@ description: Review pull request for code quality
 ### allowed-tools
 
 **Purpose:** Specify which tools command can use
-**Type:** String or Array
+**Type:** String (comma-separated) or Array (YAML list)
 **Default:** Inherits from conversation
 
+**Comma-separated (legacy):**
 ```yaml
 ---
-allowed-tools: Read, Write, Edit, Bash(git:*)
+allowed-tools: Read, Write, Edit, Bash(git *)
 ---
 ```
 
-**Patterns:**
-- `Read, Write, Edit` - Specific tools
-- `Bash(git:*)` - Bash with git commands only
-- `*` - All tools (rarely needed)
+**YAML list (recommended - cleaner and less error-prone):**
+```yaml
+---
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Bash(git *)
+  - Bash(npm *)
+  - Grep
+  - Glob
+---
+```
 
-**Use when:** Command requires specific tool access
+**Wildcard patterns for Bash:**
+- `Bash(npm *)` - Allow any npm command
+- `Bash(git * main)` - Allow git commands with 'main' anywhere in args
+- `Bash(* install)` - Allow any command ending with 'install'
+- `Bash(*)` - Allow all bash commands
+
+**Use when:** Command requires specific tool access or has bash command variations
 
 ### model
 
@@ -191,6 +207,82 @@ disable-model-invocation: true
 ```
 
 **Use when:** Command should only be manually invoked
+
+### user-invocable
+
+**Purpose:** Control visibility in slash command list
+**Type:** Boolean
+**Default:** true
+
+```yaml
+---
+user-invocable: false
+---
+```
+
+**Use when:** Command should only be programmatically invoked, not shown in `/` autocomplete
+
+### context
+
+**Purpose:** Control execution context
+**Type:** String (inherit, fork)
+**Default:** inherit
+
+```yaml
+---
+context: fork
+---
+```
+
+**Use when:** Command needs isolated context (experimental operations, high-risk actions)
+
+### agent
+
+**Purpose:** Specify agent type to execute command
+**Type:** String (swe, general-purpose, etc.)
+**Default:** main
+
+```yaml
+---
+agent: swe
+---
+```
+
+**Use when:** Command needs specialized agent capabilities
+
+### language
+
+**Purpose:** Force response language
+**Type:** String (english, portuguese, etc.)
+**Default:** Match user's conversation language
+
+```yaml
+---
+language: portuguese
+---
+```
+
+**Use when:** Command responses must be in specific language regardless of conversation
+
+### hooks
+
+**Purpose:** Add command-scoped hooks for automation
+**Type:** Array of hook configurations
+**Default:** None
+
+```yaml
+---
+hooks:
+  - type: PreToolUse
+    once: true
+  - type: PostToolUse
+  - type: Stop
+---
+```
+
+**Use when:** Command needs validation, logging, or cleanup specific to its operations
+
+See `../hook-development/` for complete hooks documentation.
 
 ## Dynamic Arguments
 

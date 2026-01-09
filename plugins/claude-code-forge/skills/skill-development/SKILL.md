@@ -156,6 +156,37 @@ description: This skill should be used when the user asks to "specific trigger 1
 ---
 ```
 
+**Optional fields:**
+
+```yaml
+---
+name: skill-name
+description: Trigger-based description
+user-invocable: true          # Show in slash command list (default: true for /skills/)
+context: fork                 # Run in isolated context (default: inherit)
+agent: swe                    # Specify agent type to execute skill (default: main)
+language: portuguese          # Force response language (default: match user's language)
+allowed-tools:                # YAML-style list (cleaner than comma-separated)
+  - Bash
+  - Read
+  - Write
+  - Edit
+hooks:                        # Inline hooks scoped to this skill
+  - type: PreToolUse
+    once: true               # Run hook only once per session
+  - type: PostToolUse
+---
+```
+
+**When to use optional fields:**
+
+- **`user-invocable: false`**: Hide skill from `/` command list (skill only triggers automatically via description)
+- **`context: fork`**: Isolate skill execution from main conversation (useful for experimental or modifying skills)
+- **`agent: type`**: Route skill to specialized agent (e.g., `swe` for code-heavy tasks)
+- **`language`**: Force response in specific language regardless of conversation language
+- **`allowed-tools`**: Restrict tools skill can use (security/scope control)
+- **`hooks`**: Add PreToolUse/PostToolUse/Stop hooks scoped to skill execution only
+
 **Naming rules:**
 - Lowercase letters, numbers, hyphens only
 - Max 64 characters
@@ -233,7 +264,59 @@ Based on user's selections, create the appropriate structure...
 
 **See:** `examples/interactive-workflow-example.md` for complete patterns
 
-### 5. Organize Content
+### 5. Configure Tool Permissions and Hooks
+
+**Tool permissions with YAML lists (recommended):**
+
+```yaml
+---
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Grep
+  - Glob
+---
+```
+
+Cleaner and less error-prone than comma-separated: `allowed-tools: Bash, Read, Write`
+
+**Bash wildcards for flexible permissions:**
+
+```yaml
+---
+allowed-tools:
+  - Bash(npm *)              # Allow any npm command
+  - Bash(git * main)         # Allow git commands with 'main' anywhere
+  - Bash(* install)          # Allow any command ending with 'install'
+  - Read
+  - Write
+---
+```
+
+Use wildcards when skill needs variations of commands without listing each one.
+
+**Inline hooks for skill-scoped automation:**
+
+```yaml
+---
+hooks:
+  - type: PreToolUse         # Validate before tool execution
+    once: true               # Run only once (useful for setup)
+  - type: PostToolUse        # React to tool results
+  - type: Stop               # Clean up when skill completes
+---
+```
+
+Hooks run only when this skill is active. Use for:
+- Validation specific to skill operations
+- Logging/tracking skill actions
+- Setup/teardown within skill lifecycle
+
+**See:** `../hook-development/` for complete hooks documentation
+
+### 6. Organize Content
 
 **Keep SKILL.md lean (1,500-2,000 words ideal, <5k max):**
 - Move detailed content to `references/`
@@ -253,7 +336,7 @@ Based on user's selections, create the appropriate structure...
 - **`examples/basic-example.sh`** - Working example
 ```
 
-### 6. Validate the Skill
+### 7. Validate the Skill
 
 **CRITICAL: Always run automated validation after creating or editing a skill.**
 
@@ -281,7 +364,7 @@ The script automatically checks:
 - [ ] Concrete examples provided
 - [ ] Supporting files clearly referenced
 
-### 7. Test the Skill
+### 8. Test the Skill
 
 **For plugin skills:**
 ```bash
@@ -289,10 +372,15 @@ cc --plugin-dir /path/to/plugin
 ```
 
 **For personal/project skills:**
-1. Restart Claude Code to load the skill
+
+Skills in `~/.claude/skills/` or `.claude/skills/` are **hot-reloaded automatically** - no restart needed!
+
+1. Edit the skill file
 2. Try trigger phrases that match the description
-3. Verify skill activates automatically
+3. Verify skill activates automatically with updated content
 4. Confirm instructions are clear and actionable
+
+Note: Plugin skills still require plugin reload (remove and re-add marketplace)
 
 **Debug if needed:**
 ```bash
@@ -383,6 +471,11 @@ cc --plugin-dir /path/to/plugin
 - ✅ Reference supporting files clearly
 - ✅ Provide working examples
 - ✅ Use gerund naming (`analyzing-code` not `code-analyzer`)
+- ✅ Use YAML lists for `allowed-tools` (cleaner than comma-separated)
+- ✅ Use wildcards in Bash permissions when appropriate (`Bash(npm *)`)
+- ✅ Set `user-invocable: false` for internal-only skills
+- ✅ Use `context: fork` for experimental or high-risk operations
+- ✅ Add inline hooks for skill-specific automation
 
 **DON'T:**
 - ❌ Use second person anywhere
@@ -391,6 +484,8 @@ cc --plugin-dir /path/to/plugin
 - ❌ Leave resources unreferenced
 - ❌ Include broken or incomplete examples
 - ❌ Skip validation
+- ❌ Make all skills user-invocable (some should be auto-trigger only)
+- ❌ Over-restrict with comma-separated allowed-tools when wildcards work better
 
 ## Additional Resources
 

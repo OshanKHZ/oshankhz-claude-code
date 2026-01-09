@@ -232,15 +232,69 @@ description: I can help you create hooks  # First person
 
 **Optional frontmatter fields:**
 
-**allowed-tools** - Restrict tool access:
+**allowed-tools** - Restrict tool access (YAML list recommended):
 ```yaml
-allowed-tools: Read, Grep, Glob  # Read-only skill
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash(npm *)    # Wildcard for any npm command
 ```
 
 Use for:
 - Read-only skills
 - Security-sensitive workflows
-- Limited-scope operations
+- Limited-scope operations with specific tool needs
+- Flexible bash permissions with wildcards
+
+**user-invocable** - Control visibility in `/` command list:
+```yaml
+user-invocable: false  # Hide from slash commands (auto-trigger only)
+```
+
+Use for:
+- Internal helper skills
+- Skills that should only trigger automatically
+- Experimental skills not ready for direct user access
+
+**context** - Control execution context:
+```yaml
+context: fork  # Run in isolated context
+```
+
+Use for:
+- Experimental or high-risk operations
+- Testing scenarios that shouldn't affect main conversation
+
+**agent** - Route to specialized agent:
+```yaml
+agent: swe  # Use SWE agent for code-heavy tasks
+```
+
+Use for:
+- Tasks requiring specialized agent capabilities
+
+**hooks** - Inline hooks scoped to skill:
+```yaml
+hooks:
+  - type: PreToolUse
+    once: true       # Run only once per session
+  - type: PostToolUse
+  - type: Stop       # Cleanup when skill completes
+```
+
+Use for:
+- Skill-specific validation
+- Setup/teardown within skill lifecycle
+- Logging/tracking skill actions
+
+**language** - Force response language:
+```yaml
+language: portuguese  # Always respond in Portuguese
+```
+
+Use for:
+- Skills that must respond in specific language
 
 ### Step 5: Write Effective Descriptions
 

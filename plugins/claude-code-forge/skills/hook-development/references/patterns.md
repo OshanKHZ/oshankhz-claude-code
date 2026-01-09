@@ -258,7 +258,52 @@ Combine multiple patterns for comprehensive protection:
 
 This provides multi-layered protection and automation.
 
-## Pattern 9: Temporarily Active Hooks
+## Pattern 9: One-Time Hooks (once: true)
+
+Hooks that run only once per session using `once: true`:
+
+**In hooks.json:**
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if git is configured (user.name, user.email). Return 'approve' if configured.",
+            "once": true
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**In skill/command frontmatter:**
+```yaml
+---
+hooks:
+  - type: PreToolUse
+    once: true        # Setup check runs once
+  - type: Stop        # Cleanup runs every time
+---
+```
+
+**When to use `once: true`:**
+- Initial setup validation (git config, env vars)
+- One-time warnings or notices
+- Expensive checks that don't need repeating
+- Session initialization tasks
+
+**Behavior:**
+- First invocation: Hook runs normally
+- Subsequent invocations: Hook skipped
+- New session: Hook runs again
+
+## Pattern 10: Temporarily Active Hooks
 
 Create hooks that only run when explicitly enabled via flag files:
 
@@ -344,3 +389,77 @@ fi
 - Per-project settings
 - Team-specific rules
 - Dynamic validation criteria
+
+## Pattern 11: Inline Hooks in Skills/Commands
+
+Skills and commands can define hooks directly in frontmatter, scoped to their execution:
+
+**In skill frontmatter:**
+```yaml
+---
+name: modifying-config
+description: This skill should be used when the user asks to "update config", "modify settings", or mentions configuration files. Validates changes before writing.
+hooks:
+  - type: PreToolUse
+    once: true           # Run setup check only once
+  - type: PostToolUse    # Validate after every tool use
+  - type: Stop           # Cleanup when skill completes
+---
+```
+
+**In command frontmatter:**
+```yaml
+---
+description: Deploy service to production
+hooks:
+  - type: PreToolUse
+    once: true           # Verify deployment config once
+  - type: PostToolUse    # Log deployment steps
+  - type: Stop           # Send deployment notification
+---
+```
+
+**Key features:**
+- Hooks scoped to skill/command lifecycle only
+- No command/prompt field needed - hooks inherit context
+- `once: true` runs hook only once per skill/command invocation
+- Supports PreToolUse, PostToolUse, and Stop hooks
+
+**When to use inline hooks:**
+- Validation specific to skill/command operations
+- Setup checks before skill starts (`once: true`)
+- Cleanup when skill/command completes (Stop hook)
+- Logging/tracking specific to skill/command actions
+
+**Example - Config validation skill:**
+```yaml
+---
+name: updating-env-vars
+description: This skill should be used when the user asks to "update .env", "modify environment variables", or works with .env files. Validates env var format.
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+hooks:
+  - type: PreToolUse
+    once: true
+  - type: PostToolUse
+---
+
+# Environment Variables Update Skill
+
+When updating .env files:
+1. Read current .env file
+2. Validate new variable format
+3. Write updated .env file
+
+Hooks ensure:
+- Initial validation of .env file format (PreToolUse, once)
+- Post-write verification (PostToolUse)
+```
+
+**Benefits:**
+- Self-contained skills with built-in validation
+- No separate hooks.json file needed
+- Clear relationship between skill and its validation
+- Easier to understand skill behavior

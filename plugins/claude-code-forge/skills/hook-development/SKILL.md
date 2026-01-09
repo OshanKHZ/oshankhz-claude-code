@@ -118,6 +118,47 @@ Execute bash commands for deterministic checks:
 
 **Important:** The examples below show the hook event structure that goes inside either format. For plugin hooks.json, wrap these in `{"hooks": {...}}`.
 
+### Inline Hooks in Skills/Commands
+
+**Skills and commands** can define hooks directly in frontmatter:
+
+```yaml
+---
+name: my-skill
+description: Skill with inline hooks
+hooks:
+  - type: PreToolUse
+    once: true
+  - type: PostToolUse
+  - type: Stop
+---
+```
+
+**Key features:**
+- Hooks scoped to skill/command execution only
+- `once: true` runs hook only once per session (useful for setup)
+- Supports PreToolUse, PostToolUse, and Stop hooks
+- No command/prompt field needed - hooks inherit context
+
+**When to use:**
+- Validation specific to skill operations
+- Setup/teardown within skill lifecycle
+- Logging/tracking skill-specific actions
+- Per-skill permission enforcement
+
+**Example use cases:**
+```yaml
+---
+hooks:
+  - type: PreToolUse
+    once: true                  # One-time setup check
+  - type: PostToolUse          # React to every tool result
+  - type: Stop                  # Cleanup when skill completes
+---
+```
+
+See skills with `hooks:` frontmatter in `/skills/` directories for examples.
+
 ## Hook Events
 
 ### PreToolUse
@@ -151,6 +192,50 @@ Execute before any tool runs. Use to approve, deny, or modify tool calls.
   "systemMessage": "Explanation for Claude"
 }
 ```
+
+**Run hooks once with `once: true`:**
+```json
+{
+  "PreToolUse": [
+    {
+      "matcher": "Bash",
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "Check if git config is set up correctly. Return 'approve' if git user.name and user.email are configured.",
+          "once": true
+        }
+      ]
+    }
+  ]
+}
+```
+
+When `once: true`, hook runs only once per session. Useful for:
+- One-time setup checks
+- Initial validation that doesn't need repeating
+- Performance optimization for expensive checks
+
+**PreToolUse `updatedInput` as middleware:**
+
+PreToolUse hooks can return `ask` decision with `updatedInput` to act as middleware:
+
+```json
+{
+  "hookSpecificOutput": {
+    "permissionDecision": "ask",
+    "updatedInput": {
+      "tool": "Bash",
+      "input": {
+        "command": "git commit -m 'feat: add feature' --no-verify"
+      }
+    }
+  },
+  "systemMessage": "Modified command to skip pre-commit hooks"
+}
+```
+
+This requests consent while proposing modifications to the tool call.
 
 ### PostToolUse
 
